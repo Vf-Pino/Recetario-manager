@@ -2,14 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
-// Cliente administrativo: solo para crear/actualizar usuarios y verificar la contraseña maestra.
-// Requiere SUPABASE_SERVICE_ROLE_KEY en .env.local
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(request: Request) {
+  // SDK con permisos administrativos (Inicializado dentro para evitar errores de build si faltan env vars)
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  try {
   try {
     const { email, password } = await request.json();
 
