@@ -397,10 +397,10 @@ export default function RecipesClient({ initialData }: Props) {
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 leading-none mb-1">Masa Total Insumos</p>
-                        <h5 className="text-2xl font-black tabular-nums">{calculateSum()} <span className="text-xs font-bold">{form.yield_unit}</span></h5>
+                        <h5 className="text-2xl font-black tabular-nums">{Math.round(calculateSum())} <span className="text-xs font-bold">{form.yield_unit}</span></h5>
                       </div>
                       <button 
-                        onClick={() => setForm(prev => ({ ...prev, yield_amount: calculateSum().toString() }))}
+                        onClick={() => setForm(prev => ({ ...prev, yield_amount: Math.round(calculateSum()).toString() }))}
                         className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-white/20"
                       >
                         Aplicar a Rendimiento
@@ -488,7 +488,7 @@ export default function RecipesClient({ initialData }: Props) {
                 <div className="flex flex-col">
                   <span className="text-[8px] font-black text-stone-300 uppercase tracking-widest">Rendimiento</span>
                   <span className="font-black text-bistro-green text-sm leading-none">
-                    {recipe.yield_amount} <span className="text-[9px]">{recipe.yield_unit}</span>
+                    {Math.round(recipe.yield_amount)} <span className="text-[9px]">{recipe.yield_unit}</span>
                   </span>
                 </div>
                 <span className="text-[8px] font-black text-bistro-gold uppercase flex items-center gap-0.5">

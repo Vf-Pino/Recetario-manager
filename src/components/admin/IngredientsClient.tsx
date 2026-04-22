@@ -252,7 +252,9 @@ export default function IngredientsClient({ initialData }: Props) {
                       {formatCostUnit(ing.cost_per_unit)}
                     </td>
                     <td className="p-5 text-right">
-                      <span className="font-mono text-stone-700 font-bold">{ing.stock}</span>
+                      <span className="font-mono text-stone-700 font-bold">
+                        {Math.round(ing.stock)}
+                      </span>
                     </td>
                     <td className="p-5 text-right space-x-2">
                       <button

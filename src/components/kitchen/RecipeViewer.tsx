@@ -6,6 +6,8 @@ import Link from 'next/link';
 import KitchenHeader from '@/components/kitchen/KitchenHeader';
 import SmartQuantityInput from '@/components/common/SmartQuantityInput';
 
+import { formatQty } from '@/lib/format';
+
 interface Props {
   recipe: Recipe;
   ingredients: RecipeIngredient[];
@@ -16,6 +18,14 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
   const [activeStep, setActiveStep] = useState<number | null>(null);
 
   const multiplier = targetYield / recipe.yield_amount;
+  const isScaled = Math.abs(multiplier - 1) > 0.001;
+
+  // Función para escalar la receta completa basada en el cambio de un solo ingrediente
+  const handleIngredientScale = (ri: RecipeIngredient, newQty: number) => {
+    if (ri.quantity === 0) return;
+    const newMultiplier = newQty / ri.quantity;
+    setTargetYield(recipe.yield_amount * newMultiplier);
+  };
 
   return (
     <div
@@ -25,13 +35,20 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
       <KitchenHeader showSearch={false} />
 
       <div className="max-w-4xl mx-auto px-5 sm:px-8 pt-8">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <Link
             href="/kitchen"
             className="inline-flex items-center gap-2 text-[#6b705a] hover:text-[#3b5442] transition-colors font-black text-xs uppercase tracking-widest active:scale-95"
           >
             <ArrowLeft size={16} strokeWidth={3} /> Volver a Estación
           </Link>
+
+          {isScaled && (
+            <div className="flex items-center gap-2 bg-bistro-red text-white px-4 py-1.5 rounded-full shadow-lg animate-pulse">
+              <Scale size={14} strokeWidth={3} />
+              <span className="text-[10px] font-black uppercase tracking-tighter">Receta Escalada</span>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-[1.5rem] p-6 sm:p-10 shadow-lg border-2 border-bistro-gold/10 mb-6 z-10 relative">
@@ -49,17 +66,17 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
               <div className="flex items-center justify-center lg:justify-start gap-3 text-bistro-green mb-1">
                 <Scale size={28} strokeWidth={3} />
                 <h2 className="font-black text-xl sm:text-3xl tracking-tight uppercase">
-                  Multiplicador
+                  Rendimiento
                 </h2>
               </div>
               <p className="text-bistro-olive font-black text-sm sm:text-lg px-4 py-2 bg-bistro-cream/40 rounded-lg inline-block border border-bistro-gold/20">
-                Base: {recipe.yield_amount} {recipe.yield_unit}
+                Base: {formatQty(recipe.yield_amount)} {recipe.yield_unit}
               </p>
             </div>
             <div className="w-full lg:w-auto flex justify-center">
               <div className="w-full max-w-sm">
                 <SmartQuantityInput
-                  value={targetYield}
+                  value={formatQty(targetYield)}
                   onChange={setTargetYield}
                   unit={recipe.yield_unit}
                   shiftStep={50}
@@ -74,10 +91,13 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
             <h3 className="font-black text-white text-lg sm:text-2xl uppercase tracking-tight">
               Ingredientes
             </h3>
-            {recipe.bakers_percentage_base_ingredient_id && (
-              <span className="text-[10px] sm:text-sm font-black uppercase tracking-widest bg-bistro-gold text-bistro-green px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-sm w-fit">
-                <Info size={16} strokeWidth={3} /> % Panadero
-              </span>
+            {isScaled && (
+              <button 
+                onClick={() => setTargetYield(recipe.yield_amount)}
+                className="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-white text-bistro-red px-3 py-1.5 rounded-lg hover:bg-bistro-red hover:text-white transition-all shadow-sm active:scale-95"
+              >
+                Resetear a Base
+              </button>
             )}
           </div>
 
@@ -86,7 +106,7 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
               <thead>
                 <tr className="bg-white text-bistro-olive text-[10px] sm:text-sm uppercase tracking-widest border-b border-bistro-cream">
                   <th className="p-4 sm:px-10 font-black">Insumo</th>
-                  <th className="p-4 sm:px-10 font-black">Cantidad</th>
+                  <th className="p-4 sm:px-10 font-black">Cantidad (Ajustable)</th>
                   {recipe.bakers_percentage_base_ingredient_id && (
                     <th className="p-4 sm:px-10 font-black text-right">%</th>
                   )}
@@ -95,7 +115,6 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
               <tbody className="divide-y divide-bistro-cream">
                 {ingredients.map((ri) => {
                   const calculatedQty = ri.quantity * multiplier;
-                  const formattedQty = parseFloat(calculatedQty.toFixed(2));
                   return (
                     <tr
                       key={ri.id}
@@ -115,18 +134,19 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
                         )}
                       </td>
                       <td className="p-4 sm:p-10">
-                        <div className="flex items-baseline gap-2">
-                          <span className="font-black text-2xl sm:text-5xl text-bistro-green border-b-2 border-bistro-gold/20 pb-0.5">
-                            {formattedQty}
-                          </span>
-                          <span className="text-[10px] sm:text-xl font-black text-bistro-olive uppercase">
-                            {ri.ingredient?.unit}
-                          </span>
+                        <div className="w-full max-w-[200px]">
+                          <SmartQuantityInput
+                            value={formatQty(calculatedQty)}
+                            onChange={(val) => handleIngredientScale(ri, val)}
+                            unit={ri.ingredient?.unit || ''}
+                            shiftStep={50}
+                            size="sm"
+                          />
                         </div>
                       </td>
                       {recipe.bakers_percentage_base_ingredient_id && (
                         <td className="p-4 sm:p-10 text-right font-black text-bistro-green text-base sm:text-3xl opacity-40">
-                          {ri.bakers_percentage ? `${ri.bakers_percentage}%` : '-'}
+                          {ri.bakers_percentage ? `${formatQty(ri.bakers_percentage)}%` : '-'}
                         </td>
                       )}
                     </tr>

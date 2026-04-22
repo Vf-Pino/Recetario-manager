@@ -27,6 +27,15 @@ export function formatCostUnit(amount: number | null | undefined): string {
 }
 
 /**
+ * Formatea una cantidad (gramaje) redondeando al entero más cercano.
+ * Ejemplo: 120.36 -> 120
+ */
+export function formatQty(amount: number | null | undefined): number {
+  if (amount == null || isNaN(amount)) return 0;
+  return Math.round(amount);
+}
+
+/**
  * Formatea un número como precio legible en pesos (alias de formatCOP).
  */
 export const formatPrice = formatCOP;

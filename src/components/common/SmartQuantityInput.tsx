@@ -10,6 +10,7 @@ interface SmartQuantityInputProps {
   min?: number;
   step?: number;
   shiftStep?: number;
+  size?: 'sm' | 'md';
 }
 
 export default function SmartQuantityInput({
@@ -19,14 +20,15 @@ export default function SmartQuantityInput({
   min = 0,
   step = 1,
   shiftStep = 50,
+  size = 'md',
 }: SmartQuantityInputProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState(String(value));
+  const [inputValue, setInputValue] = useState(String(Math.round(value)));
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!isEditing) setInputValue(String(value));
+    if (!isEditing) setInputValue(String(Math.round(value)));
   }, [value, isEditing]);
 
   useEffect(() => {
@@ -55,20 +57,23 @@ export default function SmartQuantityInput({
   const commit = () => {
     const num = parseFloat(inputValue.replace(',', '.'));
     if (!isNaN(num) && num >= min) onChange(num);
-    else setInputValue(String(value));
+    else setInputValue(String(Math.round(value)));
     setIsEditing(false);
   };
 
   const formatDisplay = (v: number) => {
-    if (unit.toLowerCase() === 'g' && v >= 1000)
-      return `${(v / 1000).toFixed(2)} kg`;
-    if (unit.toLowerCase() === 'ml' && v >= 1000)
-      return `${(v / 1000).toFixed(2)} lt`;
-    return `${v} ${unit}`;
+    const rounded = Math.round(v);
+    if (unit.toLowerCase() === 'g' && rounded >= 1000)
+      return `${(rounded / 1000).toFixed(1)} kg`;
+    if (unit.toLowerCase() === 'ml' && rounded >= 1000)
+      return `${(rounded / 1000).toFixed(1)} lt`;
+    return `${rounded} ${unit}`;
   };
 
+  const isSmall = size === 'sm';
+
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className={`flex items-center ${isSmall ? 'gap-1' : 'gap-2'} w-full`}>
       {/* ─ Minus ─ */}
       <button
         type="button"
@@ -78,9 +83,9 @@ export default function SmartQuantityInput({
         onMouseLeave={stopHold}
         onTouchStart={(e) => { e.preventDefault(); startHold(-step); }}
         onTouchEnd={stopHold}
-        className="flex-shrink-0 w-12 h-12 rounded-2xl bg-bistro-red text-white flex items-center justify-center shadow-md active:scale-90 transition-transform select-none touch-manipulation"
+        className={`${isSmall ? 'w-8 h-8 rounded-lg' : 'w-12 h-12 rounded-2xl'} flex-shrink-0 bg-bistro-red text-white flex items-center justify-center shadow-md active:scale-90 transition-transform select-none touch-manipulation`}
       >
-        <Minus size={20} strokeWidth={3} />
+        <Minus size={isSmall ? 14 : 20} strokeWidth={3} />
       </button>
 
       {/* ─ Display / Input ─ */}
@@ -95,17 +100,15 @@ export default function SmartQuantityInput({
             onBlur={commit}
             onKeyDown={(e) => {
               if (e.key === 'Enter') commit();
-              if (e.key === 'Escape') { setInputValue(String(value)); setIsEditing(false); }
+              if (e.key === 'Escape') { setInputValue(String(Math.round(value))); setIsEditing(false); }
             }}
-            className="w-full bg-white border-2 border-bistro-gold rounded-xl px-3 py-2 text-center text-xl font-black text-bistro-green outline-none"
-            style={{ fontSize: '1.25rem' }}
+            className={`w-full bg-white border-2 border-bistro-gold rounded-xl px-2 py-2 text-center font-black text-bistro-green outline-none ${isSmall ? 'text-sm' : 'text-xl'}`}
           />
         ) : (
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="w-full bg-white border-2 border-bistro-gold/30 hover:border-bistro-gold rounded-xl px-3 py-2 text-center font-black text-bistro-green transition-colors truncate"
-            style={{ fontSize: '1.1rem', lineHeight: '1.4' }}
+            className={`w-full bg-white border-2 border-bistro-gold/30 hover:border-bistro-gold rounded-xl px-2 py-2 text-center font-black text-bistro-green transition-colors truncate ${isSmall ? 'text-xs' : 'text-base'}`}
           >
             {formatDisplay(value)}
           </button>
@@ -121,9 +124,9 @@ export default function SmartQuantityInput({
         onMouseLeave={stopHold}
         onTouchStart={(e) => { e.preventDefault(); startHold(step); }}
         onTouchEnd={stopHold}
-        className="flex-shrink-0 w-12 h-12 rounded-2xl bg-bistro-green text-white flex items-center justify-center shadow-md active:scale-90 transition-transform select-none touch-manipulation"
+        className={`${isSmall ? 'w-8 h-8 rounded-lg' : 'w-12 h-12 rounded-2xl'} flex-shrink-0 bg-bistro-green text-white flex items-center justify-center shadow-md active:scale-90 transition-transform select-none touch-manipulation`}
       >
-        <Plus size={20} strokeWidth={3} />
+        <Plus size={isSmall ? 14 : 20} strokeWidth={3} />
       </button>
     </div>
   );
