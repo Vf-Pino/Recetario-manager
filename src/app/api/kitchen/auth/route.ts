@@ -10,7 +10,6 @@ export async function POST(request: Request) {
   );
 
   try {
-  try {
     const { email, password } = await request.json();
 
     if (!email || !password) {

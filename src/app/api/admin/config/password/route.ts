@@ -11,7 +11,6 @@ export async function POST(request: Request) {
   );
 
   try {
-  try {
     const { newPassword } = await request.json();
 
     if (!newPassword || newPassword.length < 6) {
