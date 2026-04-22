@@ -3,7 +3,7 @@ import { updateSession } from '@/lib/supabase/middleware';
 
 import { checkRateLimit } from '@/lib/security';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
   const method = request.method;
   const isApi = request.nextUrl.pathname.startsWith('/api');
