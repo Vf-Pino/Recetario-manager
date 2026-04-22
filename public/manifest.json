@@ -1,0 +1,22 @@
+{
+  "name": "Casa Bistró - Cocina",
+  "short_name": "Bistró",
+  "description": "Sistema de recetario digital para la cocina de Casa Bistró",
+  "start_url": "/kitchen",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#3b5442",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.png.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

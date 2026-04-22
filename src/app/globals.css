@@ -1,26 +1,40 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #efe4d0; /* Cream - Base cálida y limpia */
+  --foreground: #3b5442; /* Green - Texto principal y elegancia */
 }
 
 @theme inline {
+  /* Paleta Casa Bistró - Uso Estratégico */
+  --color-bistro-red: #9d3e33; /* Solo para alertas y errores */
+  --color-bistro-gold: #e7be86; /* Acaentos y botones secundarios */
+  --color-bistro-cream: #efe4d0; /* Fondo principal */
+  --color-bistro-olive: #6b705a; /* Textos secundarios y bordes suaves */
+  --color-bistro-green: #3b5442; /* Color de marca principal (Headers, Botones Primarios) */
+  --color-bistro-blue: #215489; /* Solo para información técnica específica */
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Custom Breakpoints */
+  --breakpoint-3xl: 1920px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
