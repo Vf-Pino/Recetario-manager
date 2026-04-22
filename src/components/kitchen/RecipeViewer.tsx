@@ -55,7 +55,7 @@ export default function RecipeViewer({ recipe, ingredients }: Props) {
           <h1 className="text-2xl sm:text-5xl font-black text-bistro-green tracking-tight leading-tight break-words">
             {recipe.name}
           </h1>
-          <p className="text-bistro-olive mt-2 sm:mt-3 font-bold text-base sm:text-xl leading-relaxed">
+          <p className="text-stone-400 mt-2 sm:mt-3 font-medium text-base sm:text-lg leading-relaxed italic border-l-2 border-bistro-gold/30 pl-4">
             {recipe.description}
           </p>
         </div>

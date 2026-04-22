@@ -279,6 +279,18 @@ export default function RecipesClient({ initialData }: Props) {
                       </div>
                     </div>
                   </section>
+                  <section className="space-y-3">
+                    <div className="flex items-center gap-2 text-stone-400">
+                       <Scale size={14} />
+                       <span className="text-[10px] font-black uppercase tracking-widest">Descripción General</span>
+                    </div>
+                    <textarea
+                      value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                      placeholder="Notas del chef, historia o perfil de sabor..."
+                      className="w-full border border-stone-200 rounded-2xl px-5 py-4 font-medium text-sm bg-stone-50/50 outline-none focus:bg-white focus:border-bistro-gold transition-all resize-none h-24 leading-relaxed"
+                    />
+                  </section>
 
                   <section className="space-y-3">
                     <div className="flex items-center gap-2 text-stone-400">
